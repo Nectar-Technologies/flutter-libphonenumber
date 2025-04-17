@@ -21,24 +21,39 @@ import java.util.Map;
 
 /** LibphonenumberPlugin */
 public class LibphonenumberPlugin implements MethodCallHandler, FlutterPlugin {
+
+  // The MethodChannel used to communicate with the Flutter engine
+  private MethodChannel channel;
+  
   private static PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
   private static PhoneNumberToCarrierMapper phoneNumberToCarrierMapper = PhoneNumberToCarrierMapper.getInstance();
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    final MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), "codeheadlabs.com/libphonenumber");
-    channel.setMethodCallHandler(new LibphonenumberPlugin());
+     setupChannel(binding.getBinaryMessenger());
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+    teardownChannel();
   }
 
-  // /** Keeping around to support older apps that aren't using v2 Android embedding */
-  // public static void registerWith(Registrar registrar) {
-  //   final MethodChannel channel = new MethodChannel(registrar.messenger(), "codeheadlabs.com/libphonenumber");
-  //   channel.setMethodCallHandler(new LibphonenumberPlugin());
-  // }
+
+  /**
+   * Sets up the method channel and registers this instance as the handler
+   */
+  private void setupChannel(Object messenger) {
+    channel = new MethodChannel((io.flutter.plugin.common.BinaryMessenger) messenger, CHANNEL_NAME);
+    channel.setMethodCallHandler(this);
+  }
+
+    /**
+   * Cleans up the method channel
+   */
+  private void teardownChannel() {
+    channel.setMethodCallHandler(null);
+    channel = null;
+  }
 
   @Override
   public void onMethodCall(MethodCall call, Result result) {
