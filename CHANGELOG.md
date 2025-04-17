@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.0 (20230705)
+* Update from emostar master
+
 ## 3.0.0 (20230705)
 
 * Update Gradle 8.0.2
